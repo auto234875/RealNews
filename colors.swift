@@ -21,10 +21,4 @@ extension UIColor {
             
         }
     }
-    static var businessCardTextColor:UIColor{
-        get {
-            return UIColor(hue: 0.4224, saturation: 0.3952, brightness: 0.5137, alpha: 1)
-        }
-    }
-    
 }
