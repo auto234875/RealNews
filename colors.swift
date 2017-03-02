@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 extension UIColor {
-    static var appColor: UIColor  {
+    static var appTextColor: UIColor  {
         get {
             return UIColor(hue: 0.96, saturation: 0.02, brightness: 0.35, alpha: 1)
         }

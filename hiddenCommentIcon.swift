@@ -114,7 +114,7 @@ class HiddenCommentIcon:UIView{
         horizontalCenterLineLayer.strokeEnd = 1.0
         upperCenterVerticalLineLayer.path = upperCenterVerticalLine.cgPath
         upperCenterVerticalLineLayer.fillColor = UIColor.black.cgColor
-        upperCenterVerticalLineLayer.strokeColor = UIColor.appColor.cgColor
+        upperCenterVerticalLineLayer.strokeColor = UIColor.appTextColor.cgColor
         upperCenterVerticalLineLayer.lineWidth = 1.0
         upperCenterVerticalLineLayer.strokeEnd = 0
         lowerCenterVerticalLineLayer.path = lowerCenterVerticalLine.cgPath

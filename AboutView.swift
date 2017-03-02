@@ -19,7 +19,7 @@ class AboutView:BlurView{
     override init(frame:CGRect){
         super.init(frame: frame)
         let nameAttributes = [NSForegroundColorAttributeName:UIColor.black,NSFontAttributeName:UIFont(name: "AppleSDGothicNeo-Regular", size: 40)]
-        let detailAttributes = [NSForegroundColorAttributeName:UIColor.appColor,NSFontAttributeName:UIFont(name: "AppleSDGothicNeo-Regular", size: 16)]
+        let detailAttributes = [NSForegroundColorAttributeName:UIColor.appTextColor,NSFontAttributeName:UIFont(name: "AppleSDGothicNeo-Regular", size: 16)]
         name.attributedText = NSAttributedString(string: "John Smith", attributes: nameAttributes)
         title.attributedText = NSAttributedString(string: "Software Developer", attributes: detailAttributes)
         mobile.attributedText = NSAttributedString(string: "832.898.4718", attributes: detailAttributes)

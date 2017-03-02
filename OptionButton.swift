@@ -13,7 +13,7 @@ class OptionButton:UIButton{
     let squareLayer = CAShapeLayer()
     let arrowLayer = CAShapeLayer()
     var iconFrame:CGRect!
-    var color = UIColor.appColor
+    var color = UIColor.appTextColor
     override init(frame:CGRect) {
         super.init(frame:frame)
         layer.addSublayer(squareLayer)

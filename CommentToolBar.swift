@@ -16,7 +16,7 @@ class CommentToolBar:UIView{
     
     override init(frame:CGRect){
         super.init(frame: frame)
-        let attributes = [NSForegroundColorAttributeName: UIColor.appColor,NSFontAttributeName:UIFont(name: "HelveticaNeue", size: 15)!]
+        let attributes = [NSForegroundColorAttributeName: UIColor.appTextColor,NSFontAttributeName:UIFont(name: "HelveticaNeue", size: 15)!]
         let closeButtonAttributedString = NSAttributedString(string: "CLOSE", attributes: attributes)
         closeButton.setAttributedTitle(closeButtonAttributedString, for: .normal)
         closeButton.backgroundColor = UIColor.clear

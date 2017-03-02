@@ -22,7 +22,7 @@ class CommentViewController:UIViewController,UITableViewDelegate,UITableViewData
     var commentsDisposable:Disposable?
     override func viewDidLoad() {
         toolbar = CommentToolBar(frame:.zero)
-        refreshControl.tintColor = UIColor.appColor
+        refreshControl.tintColor = UIColor.appTextColor
         commentTableView.addSubview(refreshControl)
         commentTableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
         commentTableView.register(UITableViewCell.self, forCellReuseIdentifier: "EmptyCommentCell")

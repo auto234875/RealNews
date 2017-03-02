@@ -15,7 +15,7 @@ class WebViewToolBar:UIView{
     var backButton = UIButton()
     var forwardButton = UIButton()
     var actionButton = OptionButton()
-    let attributes = [NSForegroundColorAttributeName: UIColor.appColor,NSFontAttributeName:UIFont(name: "HelveticaNeue", size: 14)!]
+    let attributes = [NSForegroundColorAttributeName: UIColor.appTextColor,NSFontAttributeName:UIFont(name: "HelveticaNeue", size: 14)!]
     override init(frame:CGRect){
         super.init(frame: frame)
         if !UIAccessibilityIsReduceTransparencyEnabled() {
@@ -40,7 +40,7 @@ class WebViewToolBar:UIView{
         forwardButton.backgroundColor = UIColor.clear
         addSubview(forwardButton)
         addSubview(actionButton)
-        commentButton.tintColor = UIColor.appColor
+        commentButton.tintColor = UIColor.appTextColor
         commentButton.backgroundColor = UIColor.clear
         addSubview(commentButton)
     }

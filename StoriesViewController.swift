@@ -40,7 +40,7 @@ class StoriesViewController: UIViewController,UITableViewDataSource,UITableViewD
         }).addDisposableTo(disposeBag)
         
         storyDisposable = loadStories()
-        refreshControl.tintColor = UIColor.appColor
+        refreshControl.tintColor = UIColor.appTextColor
         storiesTableView.addSubview(refreshControl)
         
         refreshControl.rx.controlEvent(.valueChanged).subscribe(onNext:{

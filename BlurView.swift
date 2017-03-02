@@ -20,7 +20,7 @@ class BlurView:UIView{
             mainView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.extraLight))
         } else {
             mainView = UIView()
-            mainView.backgroundColor = UIColor.appColor
+            mainView.backgroundColor = UIColor.appTextColor
         }
         mainView.frame = bounds
         mainView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
