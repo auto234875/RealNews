@@ -58,44 +58,24 @@ class HiddenCommentIcon:UIView{
 
     }
     func animateCollapse(duration: TimeInterval) {
-        // We want to animate the strokeEnd property of the circleLayer
         let animation = CABasicAnimation(keyPath: "strokeEnd")
-        
-        // Set the animation duration appropriately
         animation.duration = duration
-        
-        // Animate from 0 (no circle) to 1 (full circle)
         animation.fromValue = 0
         animation.toValue = 1
-        // Do a linear animation (i.e. the speed of the animation stays the same)
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        
-        // Set the circleLayer's strokeEnd property to 1.0 now so that it's the
-        // right value when the animation ends.
         upperCenterVerticalLineLayer.strokeEnd = 1.0
         lowerCenterVerticalLineLayer.strokeEnd = 1.0
-        // Do the actual animation
         upperCenterVerticalLineLayer.add(animation, forKey: "animateCollapse")
         lowerCenterVerticalLineLayer.add(animation, forKey: "animateCollapse")
     }
     func animateExpand(duration: TimeInterval) {
-        // We want to animate the strokeEnd property of the circleLayer
         let animation = CABasicAnimation(keyPath: "strokeEnd")
-        
-        // Set the animation duration appropriately
         animation.duration = duration
-        
-        // Animate from 0 (no circle) to 1 (full circle)
         animation.fromValue = 1
         animation.toValue = 0
-        // Do a linear animation (i.e. the speed of the animation stays the same)
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        
-        // Set the circleLayer's strokeEnd property to 1.0 now so that it's the
-        // right value when the animation ends.
         upperCenterVerticalLineLayer.strokeEnd = 0
         lowerCenterVerticalLineLayer.strokeEnd = 0
-        // Do the actual animation
         upperCenterVerticalLineLayer.add(animation, forKey: "animateExpand")
         lowerCenterVerticalLineLayer.add(animation, forKey: "animateExpand")
     }
@@ -108,7 +88,6 @@ class HiddenCommentIcon:UIView{
         let horizontalCenterLine = UIBezierPath()
         let upperCenterVerticalLine = UIBezierPath()
         let lowerCenterVerticalLine = UIBezierPath()
-        //let rightBracketPath = UIBezierPath()
         let leftBracketPath = UIBezierPath()
         let center = CGPoint(x: bounds.width/2, y: bounds.height/2)
         horizontalCenterLine.move(to: CGPoint(x: bounds.origin.x + 2, y: bounds.height/2))
