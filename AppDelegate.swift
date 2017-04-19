@@ -7,11 +7,14 @@
 //
 
 import UIKit
+import SwiftyStoreKit
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
         UIApplication.shared.statusBarStyle=UIStatusBarStyle.lightContent
         self.window = UIWindow(frame:UIScreen.main.bounds)
         let topStoriesViewController = StoriesViewController()
@@ -20,10 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let bestStoriesViewController = StoriesViewController()
         let jobStoriesViewController = StoriesViewController()
         let showStoriesViewController = StoriesViewController()
-        let savedStoriesViewController = SavedStoriesViewController()
         let aboutViewController = AboutViewController()
-        savedStoriesViewController.title = "Saved Stories"
+        let licensesViewController = LicensesViewController()
         aboutViewController.title = "About"
+        licensesViewController.title = "Licenses"
         topStoriesViewController.storiesType = StoriesType.topStories
         newStoriesViewController.storiesType = StoriesType.newStories
         askStoriesViewController.storiesType = StoriesType.askStories
@@ -31,10 +34,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         jobStoriesViewController.storiesType = StoriesType.jobStories
         showStoriesViewController.storiesType = StoriesType.showStories
         let rootVC = SimpleTabBarViewController()
-        rootVC.viewControllers = [topStoriesViewController,newStoriesViewController,askStoriesViewController,bestStoriesViewController,jobStoriesViewController,showStoriesViewController,savedStoriesViewController,aboutViewController]
-
+        rootVC.viewControllers = [topStoriesViewController,newStoriesViewController,askStoriesViewController,bestStoriesViewController,jobStoriesViewController,showStoriesViewController,aboutViewController,licensesViewController]
         self.window!.rootViewController = rootVC
         self.window!.makeKeyAndVisible()
+        
+        IAPcompleteTransaction()
+        if SwiftyStoreKit.localReceiptData != nil{
+            verifyPurchase(.autoRenewablePurchase, self: nil)
+        }
         return true
     }
 

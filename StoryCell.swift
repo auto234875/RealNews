@@ -8,42 +8,33 @@
 import UIKit
 import RxSwift
 class StoryCell:UITableViewCell{
-    var mainView:UIView!
+    let mainView = UIView()
     var titleLabel=UILabel()
     var authorLabel=UILabel()
     var timeLabel=UILabel()
-    var optionButton = OptionButton()
-    var commentCountLabel = UILabel()
+    var commentButton = UIButton()
+    private(set) var disposeBag = DisposeBag()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.clear
+        separatorInset = UIEdgeInsetsMake(0, padding.totalTextHorizontal.rawValue, 0, padding.totalTextHorizontal.rawValue)
         titleLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
         titleLabel.numberOfLines = 0
+        titleLabel.backgroundColor = UIColor.clear
+        authorLabel.backgroundColor = UIColor.clear
         authorLabel.lineBreakMode = .byWordWrapping
         authorLabel.numberOfLines = 0
-        optionButton.iconFrame = .zero
-        optionButton.color = UIColor.white
-        if UIAccessibilityIsReduceTransparencyEnabled() {
-            mainView.backgroundColor = UIColor.appBackgroundColor
-            mainView.addSubview(timeLabel)
-            mainView.addSubview(optionButton)
-            mainView.addSubview(titleLabel)
-            mainView.addSubview(authorLabel)
-            mainView.addSubview(commentCountLabel)
-
-        }else{
-            mainView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-            (mainView as! UIVisualEffectView).contentView.addSubview(timeLabel)
-            (mainView as! UIVisualEffectView).contentView.addSubview(optionButton)
-            (mainView as! UIVisualEffectView).contentView.addSubview(titleLabel)
-            (mainView as! UIVisualEffectView).contentView.addSubview(authorLabel)
-            (mainView as! UIVisualEffectView).contentView.addSubview(commentCountLabel)
-        }
+        commentButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        commentButton.backgroundColor = UIColor.clear
+        mainView.backgroundColor = UIColor.clear
+        mainView.addSubview(commentButton)
+        mainView.addSubview(timeLabel)
+        mainView.addSubview(titleLabel)
+        mainView.addSubview(authorLabel)
         contentView.addSubview(mainView)
     }
-    private(set) var disposeBag = DisposeBag()
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -56,32 +47,26 @@ class StoryCell:UITableViewCell{
     override func layoutSubviews() {
         super.layoutSubviews()
         mainView.frame = CGRect(x: padding.cell.rawValue, y: padding.cell.rawValue, width: contentView.bounds.width-(padding.cell.rawValue*2), height: contentView.bounds.height-(padding.cell.rawValue*2))
-        mainView.layer.cornerRadius = 10
-        mainView.layer.masksToBounds = true
 
-        guard let titleText = titleLabel.attributedText else{
+        if titleLabel.attributedText == nil {
             return
         }
-        let size = CGSize(width: mainView.bounds.width-padding.horizontalTotal.rawValue, height: CGFloat.greatestFiniteMagnitude)
+        
+        let size = CGSize(width: mainView.bounds.width-padding.genericDouble.rawValue, height: CGFloat.greatestFiniteMagnitude)
 
-        let authorSize = authorLabel.attributedText!.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil).size
-        authorLabel.frame = CGRect(x: padding.generic.rawValue, y: padding.generic.rawValue, width: authorSize.width, height: authorSize.height)
-        
-        let titleSize = titleText.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil).size
-        titleLabel.frame = CGRect(x:padding.generic.rawValue, y: authorLabel.frame.maxY+padding.interLabel.rawValue, width: titleSize.width, height: titleSize.height)
+        let authorSize = authorLabel.sizeThatFits(size)
+        authorLabel.frame = CGRect(x: padding.generic.rawValue, y: padding.generic.rawValue, width: authorSize.width, height: authorSize.height + padding.BrownFontVertical.rawValue)
+
+        let titleSize = titleLabel.sizeThatFits(size)
+        titleLabel.frame = CGRect(x:padding.generic.rawValue, y: authorLabel.frame.maxY+padding.interLabel.rawValue, width: titleSize.width, height: titleSize.height + padding.BrownFontVertical.rawValue)
         let timeSize = timeLabel.sizeThatFits(size)
-        timeLabel.frame = CGRect(x: padding.generic.rawValue, y: titleLabel.frame.maxY + padding.interLabel.rawValue, width: timeSize.width, height: timeSize.height)
-        
-        if commentCountLabel.attributedText != nil{
-            let commentCountSize = commentCountLabel.attributedText!.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil).size
-            commentCountLabel.frame = CGRect(x: timeLabel.frame.maxX, y: timeLabel.frame.origin.y, width: commentCountSize.width, height: commentCountSize.height)
-            
+        timeLabel.frame = CGRect(x: padding.generic.rawValue, y: titleLabel.frame.maxY + padding.interLabel.rawValue, width: timeSize.width, height: timeSize.height + padding.BrownFontVertical.rawValue)
+
+        if commentButton.attributedTitle(for: .normal) != nil{
+            let commentButtonSize = commentButton.intrinsicContentSize
+            commentButton.frame = CGRect(x: timeLabel.frame.maxX, y: titleLabel.frame.maxY, width: commentButtonSize.width, height: timeSize.height + padding.interLabel.rawValue + padding.totalTextHorizontal.rawValue + padding.BrownFontVertical.rawValue)
+        }else{
+            commentButton.frame = .zero
         }
-        optionButton.frame = CGRect(x: mainView.bounds.width - 44, y: titleLabel.frame.maxY + padding.interLabel.rawValue, width: 44, height: timeSize.height+padding.generic.rawValue)
-        let iconFrameWidth:CGFloat = 10
-            optionButton.iconFrame = CGRect(x: optionButton.bounds.width-(padding.generic.rawValue+iconFrameWidth), y: 0, width: iconFrameWidth, height: 15)
-        
-        
-        
-    }
+        }
 }

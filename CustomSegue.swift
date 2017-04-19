@@ -16,7 +16,7 @@ enum TransitionType {
 
 class SplitFadeAnimator:NSObject,UIViewControllerAnimatedTransitioning{
     var duration:TimeInterval!
-    var presenting:Bool?
+    var presenting:Bool!
     var originFrame:CGRect!
     
     init(withDuration duration: TimeInterval, forTransitionType type: TransitionType, originFrame: CGRect) {
@@ -31,7 +31,7 @@ class SplitFadeAnimator:NSObject,UIViewControllerAnimatedTransitioning{
         let toView = transitionContext.viewController(forKey: .to)!.view!
         let fromView = transitionContext.viewController(forKey: .from)!.view!
         let scale = UIScreen.main.scale
-        if presenting! == true{
+        if presenting{
             toView.frame = fromView.frame
             containerView.addSubview(toView)
             let image = fromView.snapshot()
@@ -46,7 +46,6 @@ class SplitFadeAnimator:NSObject,UIViewControllerAnimatedTransitioning{
             toView.addSubview(bottomView)
             
             if originFrame.origin.y <= 0{
-            print(image.scale)
                 let images = split_image(image, atDistance: originFrame.origin.y+originFrame.height, edge: .minYEdge,scale:scale)
             middleView.layer.contents = images.0
             bottomView.layer.contents = images.1
@@ -69,7 +68,7 @@ class SplitFadeAnimator:NSObject,UIViewControllerAnimatedTransitioning{
             
             
         
-            UIView.animate(withDuration: duration, animations: {
+            UIView.animate(withDuration: duration, delay: 0, options:.curveEaseOut,animations: {
             topView.layer.setAffineTransform(CGAffineTransform.identity.translatedBy(x: 0, y: -topView.frame.height))
             bottomView.layer.setAffineTransform(CGAffineTransform.identity.translatedBy(x: 0, y: bottomView.frame.height))
             middleView.alpha = 0
@@ -80,7 +79,7 @@ class SplitFadeAnimator:NSObject,UIViewControllerAnimatedTransitioning{
             let topView = fromView.viewWithTag(1)!
             let middleView = fromView.viewWithTag(2)!
             let bottomView = fromView.viewWithTag(3)!
-            UIView.animate(withDuration: duration, animations: {
+            UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
                 topView.layer.setAffineTransform(CGAffineTransform.identity)
                 bottomView.layer.setAffineTransform(CGAffineTransform.identity)
                 middleView.alpha = 1

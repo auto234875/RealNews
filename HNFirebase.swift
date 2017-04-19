@@ -80,8 +80,8 @@ struct Comment{
     let level:Int
 }
 
-func createStoriesObservable(type:StoriesType)->Observable<Story>{
-     let observable = URLSession.shared.rx.json(url:NSURL(string: type.rawValue) as! URL)
+func createStoriesObservable(type:StoriesType)->Observable<Story?>{
+     let observable = URLSession.shared.rx.json(url:URL(string: type.rawValue)!)
         .map({(json:Any)->Observable<Any> in
             var observableStories = [Observable<Any>]()
             for i in json as! [Int]{
@@ -93,7 +93,7 @@ func createStoriesObservable(type:StoriesType)->Observable<Story>{
     return flatMapStoriesObservable(observable: observable)
 }
 
-func flatMapStoriesObservable(observable:Observable<Observable<Any>>)->Observable<Story>{
+func flatMapStoriesObservable(observable:Observable<Observable<Any>>)->Observable<Story?>{
     
     return mapStoriesObservable(observable:observable.flatMap({observable in
         return observable
@@ -101,25 +101,36 @@ func flatMapStoriesObservable(observable:Observable<Observable<Any>>)->Observabl
 
 }
 
-func mapStoriesObservable(observable:Observable<Any>)->Observable<Story>{
+func mapStoriesObservable(observable:Observable<Any>)->Observable<Story?>{
     
-    return observable.mapWithIndex({(json:Any,index)->Story in
+    return observable.mapWithIndex({(json:Any,index)->Story? in
         
-        let storyDict = json as! Dictionary<String,Any>
+        guard let storyDict = json as? Dictionary<String,Any> else{
+            return nil
+        }
+        if storyDict["dead"] as? Bool == true || storyDict["deleted"] as? Bool == true{
+            return nil
+        }
+        let id = storyDict["id"] as! Int
         let author = storyDict["by"] as! String
-        let commentCount = storyDict["descendants"] as! Int!
+        var commentCount = storyDict["descendants"] as! Int?
+        if commentCount != nil && commentCount == 0 {
+            commentCount = nil
+        }
         let kids = storyDict["kids"] as! [Int]?
         let time = storyDict["time"] as! Int
-        let id = storyDict["id"] as! Int
         let score = storyDict["score"] as! Int
-        let url = storyDict["url"] as? String
+        var url = storyDict["url"] as! String?
+        if url != nil && url!.isEmpty {
+            url = nil
+        }
         let title = storyDict["title"] as! String
         return Story(author:author,commentCount:commentCount,kids:kids,time:time,id:id,score:score,url:url,title:title,index:index)
     })
     
 }
 
-func createStoriesObservable(id:[Int])->Observable<Story>{
+func createStoriesObservable(id:[Int])->Observable<Story?>{
     var observableStories = [Observable<Any>]()
     for i in id{
         let storyURL = URL(string:"https://hacker-news.firebaseio.com/v0/item/"+String(i)+".json")!
@@ -129,18 +140,19 @@ func createStoriesObservable(id:[Int])->Observable<Story>{
     return mapStoriesObservable(observable: observable)
 }
 
-func createCommentsObservable(kids:[Int]?,isRoot:Bool,level:Int)->Observable<Comment>?{
-    if kids == nil{
+func createCommentsObservable(kids:[Int]?,isRoot:Bool,level:Int)->Observable<Comment?>?{
+    guard let unwrappedKids = kids else{
         return nil
     }
     let str = "https://hacker-news.firebaseio.com/v0/item/"
-    var observableArray = [Observable<Comment>]()
+    var observableArray = [Observable<Comment?>]()
     
-    for i in kids!{
-        observableArray.append(URLSession.shared.rx.json(url:URL(string:str+String(i)+".json")!).flatMapWithIndex({(json:Any,index:Int)->Observable<Comment> in
+    for i in unwrappedKids{
+        let urlString = str + String(i) + ".json"
+        observableArray.append(URLSession.shared.rx.json(url:URL(string:urlString)!).flatMap({(json:Any)->Observable<Comment?> in
             
             guard let comment = json as? Dictionary<String,Any> else{
-                return Observable.empty()
+                return Observable.just(nil)
             }
             let author = comment["by"] as! String?
             let parent = comment["parent"] as! Int?
@@ -149,16 +161,16 @@ func createCommentsObservable(kids:[Int]?,isRoot:Bool,level:Int)->Observable<Com
             let title = comment["title"] as! String?
             let text = comment["text"] as! String?
             let kids = comment["kids"] as! [Int]?
-            let observable = Observable.just(Comment(author: author, title:title,parent: parent,time: time, id: id, text: text,kids:kids,level:level))
+            let observable = Observable.just(Optional(Comment(author: author, title:title,parent: parent,time: time, id: id, text: text,kids:kids,level:level)))
             if kids == nil{
                 return observable
             }
             
-            if isRoot{
-                return observable.concat(createCommentsObservable(kids: kids,isRoot:false,level:0)!)
-            }else{
-                return observable.concat(createCommentsObservable(kids: kids,isRoot:false,level:level+1)!)
+            let nextLevel = isRoot ? 0 : level + 1
+            guard let newObservable = createCommentsObservable(kids: kids,isRoot:false,level:nextLevel) else{
+                return observable
             }
+            return observable.concat(newObservable)
             
         }))
     }

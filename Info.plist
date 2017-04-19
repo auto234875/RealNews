@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -29,6 +29,25 @@
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Brown-Bold-Italic.otf</string>
+		<string>Brown-Bold.otf</string>
+		<string>Brown-Light-Italic.otf</string>
+		<string>Brown-Light.otf</string>
+		<string>Brown-Regular.otf</string>
+		<string>Brown-Regular-Italic.otf</string>
+		<string>Brown-Thin-Italic.otf</string>
+		<string>Brown-Thin.otf</string>
+		<string>circular-black-italic.otf</string>
+		<string>circular-black.otf</string>
+		<string>circular-bold.otf</string>
+		<string>circular-bold-italic.otf</string>
+		<string>circular-book.otf</string>
+		<string>circular-book-italic.otf</string>
+		<string>circular-medium.otf</string>
+		<string>circular-medium-italic.otf</string>
+	</array>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

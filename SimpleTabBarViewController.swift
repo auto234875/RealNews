@@ -20,8 +20,9 @@ class SimpleTabBarViewController:UITabBarController,UIViewControllerTransitionin
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
-        tabBar.tintColor = UIColor.white
-        tabBar.barTintColor = UIColor.black
+        tabBar.clipsToBounds = true
+        tabBar.tintColor = UIColor.turquoise
+        tabBar.barTintColor = UIColor.white
         transitioningDelegate = self
         modalPresentationStyle = UIModalPresentationStyle.custom
         let tableView = moreNavigationController.topViewController!.view as! UITableView
@@ -30,11 +31,11 @@ class SimpleTabBarViewController:UITabBarController,UIViewControllerTransitionin
         moreNavigationControllerDelegate = tableView.delegate
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorColor = UIColor.clear
-        tableView.backgroundView = UIImageView(image: UIImage(named: "storiesBackground"))
-        tableView.backgroundColor = UIColor.clear
+        tableView.separatorColor = UIColor.lightGray
+        tableView.backgroundColor = UIColor.white
+        tableView.tableFooterView = UIView()
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return moreNavigationControllerDataSource!.tableView(tableView, numberOfRowsInSection: section)
     }
@@ -45,7 +46,7 @@ class SimpleTabBarViewController:UITabBarController,UIViewControllerTransitionin
         let infoCell = UITableViewCell()
         moreNavigationControllerDelegate!.tableView!(tableView, willDisplay:infoCell, forRowAt: indexPath)
         let title = infoCell.textLabel!.text
-        let attributes = [NSForegroundColorAttributeName:UIColor.white,NSFontAttributeName:UIFont.systemFont(ofSize: 20)]
+        let attributes = [NSForegroundColorAttributeName:UIColor.appTextColor,NSFontAttributeName:UIFont(name: "Brown-Light", size: 20)!]
         cell.viewControllerLabel.attributedText = NSAttributedString(string: title!, attributes: attributes)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -63,15 +64,16 @@ class SimpleTabBarViewController:UITabBarController,UIViewControllerTransitionin
                 return true
             }
             viewController.storiesTableView.setContentOffset(.zero, animated: true)
+            viewController.searchTableView.setContentOffset(.zero, animated: true)
         }
         return true
     }
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) ->UIViewControllerAnimatedTransitioning? {
-        return SplitFadeAnimator(withDuration: 0.3, forTransitionType: TransitionType.Presenting, originFrame: self.originFrame)
+        return SplitFadeAnimator(withDuration: 0.4, forTransitionType: TransitionType.Presenting, originFrame: self.originFrame)
         
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return SplitFadeAnimator(withDuration: 0.3, forTransitionType: TransitionType.Dismissing, originFrame: self.originFrame)
+        return SplitFadeAnimator(withDuration: 0.2, forTransitionType: TransitionType.Dismissing, originFrame: self.originFrame)
     }
 }

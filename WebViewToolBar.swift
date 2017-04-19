@@ -14,8 +14,8 @@ class WebViewToolBar:UIView{
     var commentButton = UIButton()
     var backButton = UIButton()
     var forwardButton = UIButton()
-    var actionButton = OptionButton()
-    let attributes = [NSForegroundColorAttributeName: UIColor.appTextColor,NSFontAttributeName:UIFont(name: "HelveticaNeue", size: 14)!]
+    var actionButton = UIButton()
+    let attributes = [NSForegroundColorAttributeName: UIColor.turquoise,NSFontAttributeName:UIFont.standard]
     override init(frame:CGRect){
         super.init(frame: frame)
         if !UIAccessibilityIsReduceTransparencyEnabled() {
@@ -26,31 +26,36 @@ class WebViewToolBar:UIView{
             blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             addSubview(blurEffectView)
         } else {
-            backgroundColor = UIColor.appBackgroundColor
+            backgroundColor = UIColor.white
         }
         
-        let attributedString = NSAttributedString(string: "CLOSE", attributes: attributes)
-        closeButton.setAttributedTitle(attributedString, for: .normal)
+        commentButton.titleEdgeInsets = UIEdgeInsets(top: 4, left: 0, bottom: -4, right: 0)
+        closeButton.setImage(UIImage(named:"X")!.withRenderingMode(.alwaysTemplate), for: .normal)
         closeButton.backgroundColor = UIColor.clear
+        closeButton.tintColor = UIColor.turquoise
         addSubview(closeButton)
-        backButton.setImage(UIImage(named:"back"), for: .normal)
+        backButton.setImage(UIImage(named:"back")!.withRenderingMode(.alwaysTemplate), for: .normal)
         backButton.backgroundColor = UIColor.clear
+        backButton.tintColor = UIColor.lightAppTextColor
         addSubview(backButton)
-        forwardButton.setImage(UIImage(named:"forward"), for: .normal)
+        forwardButton.setImage(UIImage(named:"forward")!.withRenderingMode(.alwaysTemplate), for: .normal)
         forwardButton.backgroundColor = UIColor.clear
+        forwardButton.tintColor = UIColor.lightAppTextColor
         addSubview(forwardButton)
+        actionButton.setImage(UIImage(named:"activity")!.withRenderingMode(.alwaysTemplate), for: .normal)
+        actionButton.backgroundColor = UIColor.clear
+        actionButton.tintColor = UIColor.turquoise
+        actionButton.contentEdgeInsets = UIEdgeInsets(top: -2, left: 0, bottom: 2, right: 0)
         addSubview(actionButton)
-        commentButton.tintColor = UIColor.appTextColor
         commentButton.backgroundColor = UIColor.clear
         addSubview(commentButton)
     }
     
     override func layoutSubviews() {
-        closeButton.frame = CGRect(x: 0, y: 0, width: 65, height: bounds.height)
+        closeButton.frame = CGRect(x: 0, y: 0, width: 44, height: bounds.height)
         backButton.frame = CGRect(x: closeButton.frame.maxX, y: 0, width: 44, height: bounds.height)
         forwardButton.frame = CGRect(x: backButton.frame.maxX, y: 0, width: 44, height: bounds.height)
         
-        actionButton.iconFrame = CGRect(x: 12, y: 2, width: 20, height: 30)
         actionButton.frame = CGRect(x: forwardButton.frame.maxX, y: 0, width: 44, height: bounds.height)
         guard let commentButtonText = commentButton.currentAttributedTitle else{
             commentButton.frame = .zero
@@ -58,8 +63,7 @@ class WebViewToolBar:UIView{
         }
         let size = CGSize(width: .greatestFiniteMagnitude, height: bounds.height)
         let commentSize = commentButtonText.boundingRect(with: size, options: .usesLineFragmentOrigin, context: nil)
-        //commentButton.frame = CGRect(x: actionButton.frame.maxX, y: 0, width: bounds.width-actionButton.frame.maxX, height: bounds.height)
-        commentButton.frame = CGRect(x: bounds.width - commentSize.width - padding.generic.rawValue, y: 0, width: commentSize.width + padding.generic.rawValue, height: bounds.height)
+        commentButton.frame = CGRect(x: bounds.width - commentSize.width - padding.totalTextHorizontal.rawValue, y: 0, width: commentSize.width + padding.totalTextHorizontal.rawValue, height: bounds.height)
         
         
     }

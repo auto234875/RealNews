@@ -20,17 +20,27 @@ class CommentViewController:UIViewController,UITableViewDelegate,UITableViewData
     var showStory:Bool!
     let disposeBag = DisposeBag()
     var commentsDisposable:Disposable?
+    
     override func viewDidLoad() {
+        view.backgroundColor = UIColor.white
+        progressView.progressTintColor = UIColor.turquoise
         toolbar = CommentToolBar(frame:.zero)
         refreshControl.tintColor = UIColor.appTextColor
+        commentTableView.tableFooterView = UIView()
         commentTableView.addSubview(refreshControl)
         commentTableView.register(CommentCell.self, forCellReuseIdentifier: "CommentCell")
         commentTableView.register(UITableViewCell.self, forCellReuseIdentifier: "EmptyCommentCell")
         commentTableView.delegate = self
         commentTableView.dataSource = self
         commentTableView.backgroundColor = UIColor.clear
-        commentTableView.separatorColor = UIColor.clear
+        commentTableView.separatorColor = UIColor.lightGray
         
+        let scrollToTopGesture = UITapGestureRecognizer()
+        toolbar.middleView.addGestureRecognizer(scrollToTopGesture)
+        scrollToTopGesture.rx.methodInvoked(#selector(touchesBegan(_:with:))).subscribe(onNext:{[unowned self](event)->Void in
+            self.commentTableView.setContentOffset(.zero, animated: true)
+        }).addDisposableTo(disposeBag)
+
         toolbar.closeButton.rx.tap.subscribe(onNext:{[weak self]()->Void in
             guard let weakself = self else{
                 return
@@ -54,10 +64,8 @@ class CommentViewController:UIViewController,UITableViewDelegate,UITableViewData
             toolbar.storyButton.isEnabled = false
             toolbar.storyButton.isHidden = true
         }
-        let backgroundView = UIImageView(image: UIImage(named: "storiesBackground"))
-        backgroundView.contentMode = .scaleAspectFill
-        view.addSubview(backgroundView)
-        view.addSubview(progressView)
+        
+        toolbar.addSubview(progressView)
         view.addSubview(toolbar)
         view.addSubview(commentTableView)
         
@@ -78,36 +86,33 @@ class CommentViewController:UIViewController,UITableViewDelegate,UITableViewData
         }).addDisposableTo(disposeBag)
     }
     
-    func loadComments()->Disposable{
-        let commentsDisposable = newComment(cellWidth: UIScreen.main.bounds.width,story:story).subscribe(onNext:{(comment:CommentViewModel?)->Void in
-            if comment == nil {
+    func loadComments()->Disposable!{
+        guard let observable = newComment(cellWidth: UIScreen.main.bounds.width,story:story) else{
+            return nil
+        }
+        let commentsDisposable = observable.subscribe(onNext:{[unowned self](comment:CommentViewModel?)->Void in
+            guard let unwrappedComment = comment else {
                 return
             }
-            DispatchQueue.main.async(execute: {[weak self]()-> Void in
-                guard let weakself = self else{
+            DispatchQueue.main.async(execute: {()-> Void in
+                self.commentViewModel.append(unwrappedComment)
+                self.commentTableView.reloadData()
+                guard let commentCount = self.story.commentCount else{
                     return
                 }
-                weakself.commentViewModel.append(comment!)
-                weakself.commentTableView.reloadData()
-                guard let commentCount = weakself.story.commentCount else{
-                    return
-                }
-                weakself.progressView.progress = Float(weakself.commentViewModel.count)/Float(commentCount)
+                self.progressView.progress = Float(self.commentViewModel.count)/Float(commentCount)
             })
         },onCompleted:{
-            DispatchQueue.main.async(execute: {[weak self]()-> Void in
-                guard let weakself = self else{
-                    return
-                }
-                weakself.progressView.progress = 0
+            DispatchQueue.main.async(execute: {()-> Void in
+                self.progressView.progress = 0
             })
         })
         return commentsDisposable
     }
     override func viewWillLayoutSubviews() {
-        progressView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 10)
         toolbar.frame = CGRect(x:0,y:view.bounds.height-44,width:view.bounds.width,height:44)
-        commentTableView.frame = CGRect(x:0,y:progressView.frame.height,width:view.bounds.width,height:view.bounds.height-(toolbar.frame.height+progressView.frame.height))
+        progressView.frame = CGRect(x: 0, y: toolbar.frame.height - progressView.frame.height, width: view.bounds.width, height: progressView.frame.height)
+        commentTableView.frame = CGRect(x:0,y:0,width:view.bounds.width,height:view.bounds.height-toolbar.frame.height)
     }
 
    func numberOfSections(in tableView: UITableView) -> Int {

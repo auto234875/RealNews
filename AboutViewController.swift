@@ -8,17 +8,30 @@
 
 import Foundation
 import UIKit
-class AboutViewController:UIViewController{
+import RxSwift
+import RxCocoa
+import MessageUI
+class AboutViewController:UIViewController,MFMailComposeViewControllerDelegate{
     let aboutView = AboutView()
-    
+    let disposeBag = DisposeBag()
     override func viewDidLoad() {
-        let backgroundView = UIImageView(image: UIImage(named: "storiesBackground"))
-        backgroundView.contentMode = .scaleAspectFill
-        view.addSubview(backgroundView)
+        view.backgroundColor = UIColor.white
         view.addSubview(aboutView)
+        aboutView.hireMeGesture.rx.methodInvoked(#selector(touchesBegan(_:with:))).subscribe(onNext:{[unowned self](event)->Void in
+            if !MFMailComposeViewController.canSendMail() {
+                return
+            }
+            let composeVC = MFMailComposeViewController()
+            composeVC.setToRecipients(["auto234875@gmail.com"])
+            self.present(composeVC, animated: true, completion: nil)
+            composeVC.mailComposeDelegate = self
+        }).addDisposableTo(disposeBag)
+    }
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
     
     override func viewWillLayoutSubviews() {
-        aboutView.frame = CGRect(x: padding.cell.rawValue, y: padding.cell.rawValue, width: view.bounds.width-(padding.cell.rawValue*2), height: view.bounds.height-(padding.cell.rawValue*2)-tabBarController!.tabBar.frame.height)
+        aboutView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height-tabBarController!.tabBar.frame.height)
     }
 }

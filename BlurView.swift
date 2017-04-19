@@ -17,10 +17,10 @@ class BlurView:UIView{
         backgroundColor = UIColor.clear
         
         if !UIAccessibilityIsReduceTransparencyEnabled() {
-            mainView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.extraLight))
+            mainView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.light))
         } else {
             mainView = UIView()
-            mainView.backgroundColor = UIColor.appTextColor
+            mainView.backgroundColor = UIColor.clear
         }
         mainView.frame = bounds
         mainView.autoresizingMask = [.flexibleWidth, .flexibleHeight]

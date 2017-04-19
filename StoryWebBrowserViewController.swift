@@ -41,33 +41,28 @@ class StoryWebBrowserViewController:UIViewController,WKUIDelegate{
     
     override func viewWillLayoutSubviews() {
         toolbar.frame = CGRect(x:0,y:view.bounds.height-44,width:view.bounds.width,height:44)
-        progressView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 10)
+        progressView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: progressView.frame.height)
     }
     
     override func viewDidLoad() {
+        progressView.progressTintColor = UIColor.turquoise
         toolbar = WebViewToolBar(frame:.zero)
         toolbar.closeButton.rx.tap.subscribe(onNext:{Void in
             self.dismiss(animated: true, completion: nil)
         }).addDisposableTo(disposeBag)
         
-        toolbar.commentButton.rx.tap.subscribe(onNext:{[weak self]()->Void in
-            guard let weakself = self else {
-                return
-            }
+        toolbar.commentButton.rx.tap.subscribe(onNext:{[unowned self]()->Void in
             let commentVC = CommentViewController()
-            commentVC.story = weakself.story
+            commentVC.story = self.story
             commentVC.showStory = false
-            weakself.present(commentVC, animated: true, completion: nil)
+            self.present(commentVC, animated: true, completion: nil)
         }).addDisposableTo(disposeBag)
 
-        if story == nil{
-            disableCommentButton()
-        }else if story!.commentCount == nil{
-            disableCommentButton()
-        }else if story!.commentCount == 0{
-            disableCommentButton()
-        }else{
-            let commentString = story!.commentCount! > 1 ? String(story!.commentCount!)+" comments" : String(story!.commentCount!)+" comment"
+        if story?.commentCount == nil{
+            toolbar.commentButton.isEnabled = false
+            toolbar.commentButton.isHidden = true
+         }else{
+            let commentString = story!.commentCount! > 1 ? String(story!.commentCount!)+" COMMENTS" : String(story!.commentCount!)+" COMMENT"
             let commentAttributedString = NSAttributedString(string: commentString, attributes: toolbar.attributes)
             toolbar.commentButton.setAttributedTitle(commentAttributedString, for: .normal)
         }
@@ -77,56 +72,43 @@ class StoryWebBrowserViewController:UIViewController,WKUIDelegate{
         let myRequest = URLRequest(url: URL(string: url)!)
         webView.load(myRequest)
         
-        webView.rx.canGoBack.subscribe(onNext:{[weak self] (canGoBack)->Void in
-            guard let weakself = self else {
-                return
-            }
-            weakself.toolbar.backButton.isEnabled = canGoBack
-        }).addDisposableTo(disposeBag)
-        
-        webView.rx.canGoForward.subscribe(onNext:{[weak self] (canGoForward)->Void in
-            guard let weakself = self else {
-                return
-            }
-            weakself.toolbar.forwardButton.isEnabled = canGoForward
-        }).addDisposableTo(disposeBag)
-        
-        toolbar.backButton.rx.tap.subscribe(onNext:{[weak self]()->Void in
-            guard let weakself = self else {
-                return
-            }
-            weakself.webView.goBack()
-        }).addDisposableTo(disposeBag)
-        
-        toolbar.forwardButton.rx.tap.subscribe(onNext:{[weak self]()->Void in
-            guard let weakself = self else {
-                return
-            }
-            weakself.webView.goForward()
-        }).addDisposableTo(disposeBag)
-        
-        toolbar.actionButton.rx.tap.subscribe(onNext:{[weak self]()->Void in
-            guard let weakself = self else {
-                return
-            }
-        
-            let viewController = UIActivityViewController(activityItems: [weakself.webView.url!], applicationActivities: nil)
-            weakself.present(viewController, animated: true, completion: nil)
-        }).addDisposableTo(disposeBag)
-        
-        webView.rx.estimatedProgress.subscribe(onNext:{[weak self](estimatedProgress)->Void in
-            guard let weakself = self else {
-                return
-            }
-            weakself.progressView.progress = Float(estimatedProgress)
-            if estimatedProgress == 1.0{
-                weakself.progressView.progress = 0
+        webView.rx.canGoBack.subscribe(onNext:{[unowned self] (canGoBack)->Void in
+            self.toolbar.backButton.isEnabled = canGoBack
+            if canGoBack {
+                self.toolbar.backButton.tintColor = UIColor.turquoise
+            }else{
+                self.toolbar.backButton.tintColor = UIColor.lightAppTextColor
             }
         }).addDisposableTo(disposeBag)
-    }
-    func disableCommentButton(){
-        toolbar.commentButton.isEnabled = false
-        toolbar.commentButton.isHidden = true
+        
+        webView.rx.canGoForward.subscribe(onNext:{[unowned self] (canGoForward)->Void in
+            self.toolbar.forwardButton.isEnabled = canGoForward
+            if canGoForward {
+                self.toolbar.forwardButton.tintColor = UIColor.turquoise
+            }else{
+                self.toolbar.forwardButton.tintColor = UIColor.lightAppTextColor
+            }
+        }).addDisposableTo(disposeBag)
+        
+        toolbar.backButton.rx.tap.subscribe(onNext:{[unowned self]()->Void in
+            self.webView.goBack()
+        }).addDisposableTo(disposeBag)
+        
+        toolbar.forwardButton.rx.tap.subscribe(onNext:{[unowned self]()->Void in
 
+            self.webView.goForward()
+        }).addDisposableTo(disposeBag)
+        
+        toolbar.actionButton.rx.tap.subscribe(onNext:{[unowned self]()->Void in
+            let viewController = UIActivityViewController(activityItems: [self.webView.url!], applicationActivities: nil)
+            self.present(viewController, animated: true, completion: nil)
+        }).addDisposableTo(disposeBag)
+        
+        webView.rx.estimatedProgress.subscribe(onNext:{[unowned self](estimatedProgress)->Void in
+            self.progressView.progress = Float(estimatedProgress)
+            if estimatedProgress == 1.0{
+                self.progressView.progress = 0
+            }
+        }).addDisposableTo(disposeBag)
     }
 }

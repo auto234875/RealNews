@@ -12,7 +12,7 @@ import WebKit
 
 
 class CommentCell:UITableViewCell{
-    var mainView:UIView! = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    let mainView = UIView()
     let authorLabel = UILabel()
     let commentLabel = UITextView()
     let replyLabel = UILabel()
@@ -32,22 +32,13 @@ class CommentCell:UITableViewCell{
         commentLabel.isScrollEnabled = false
         commentLabel.dataDetectorTypes = .link
         commentLabel.isEditable = false
+        mainView.backgroundColor = UIColor.clear
+        mainView.addSubview(hiddenCommentIcon)
+        mainView.addSubview(commentLabel)
+        mainView.addSubview(authorLabel)
+        mainView.addSubview(replyLabel)
+        mainView.addSubview(timeLabel)
         
-        if UIAccessibilityIsReduceTransparencyEnabled() {
-            mainView.backgroundColor = UIColor.appBackgroundColor
-            mainView.addSubview(hiddenCommentIcon)
-            mainView.addSubview(commentLabel)
-            mainView.addSubview(authorLabel)
-            mainView.addSubview(replyLabel)
-            mainView.addSubview(timeLabel)
-        }else{
-            mainView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
-            (mainView as! UIVisualEffectView).contentView.addSubview(hiddenCommentIcon)
-            (mainView as! UIVisualEffectView).contentView.addSubview(commentLabel)
-            (mainView as! UIVisualEffectView).contentView.addSubview(authorLabel)
-            (mainView as! UIVisualEffectView).contentView.addSubview(replyLabel)
-            (mainView as! UIVisualEffectView).contentView.addSubview(timeLabel)
-        }
         contentView.addSubview(mainView)
     }
     override func prepareForReuse()
@@ -65,25 +56,23 @@ class CommentCell:UITableViewCell{
         let mainViewOriginX:CGFloat = padding.cell.rawValue + indentation
         let mainViewHeight = contentView.bounds.height - (padding.cell.rawValue * 2)
         mainView.frame = CGRect(x: mainViewOriginX, y: padding.cell.rawValue, width: mainViewWidth, height: mainViewHeight)
-        mainView.layer.cornerRadius = 10
-        mainView.layer.masksToBounds = true
-        
-        guard let authorText = authorLabel.attributedText else{
+       separatorInset = UIEdgeInsetsMake(0, mainView.frame.origin.x + padding.generic.rawValue, 0, padding.totalTextHorizontal.rawValue)
+        if authorLabel.attributedText == nil {
             return
         }
         
         let hiddenCommentIconWidth:CGFloat = 11
         let hiddenCommentIconHorizontalPadding:CGFloat = 8
-        let authorWidth:CGFloat = mainViewWidth - (padding.horizontalTotal.rawValue) - hiddenCommentIconWidth - hiddenCommentIconHorizontalPadding
+        let authorWidth:CGFloat = mainViewWidth - (padding.genericDouble.rawValue) - hiddenCommentIconWidth - hiddenCommentIconHorizontalPadding
         let originX = padding.generic.rawValue
         let originY = padding.generic.rawValue
         let authorSize = CGSize(width: authorWidth, height: CGFloat.greatestFiniteMagnitude)
-        let authorRect = authorText.boundingRect(with: authorSize, options: .usesLineFragmentOrigin, context: nil)
+        let authorRect = authorLabel.sizeThatFits(authorSize)
         hiddenCommentIcon.frame = CGRect(x: originX, y: originY + 3, width: hiddenCommentIconWidth, height: hiddenCommentIconWidth)
-        authorLabel.frame = CGRect(x:hiddenCommentIcon.frame.maxX+hiddenCommentIconHorizontalPadding, y: originY, width: authorRect.width, height: authorRect.height)
+        authorLabel.frame = CGRect(x:hiddenCommentIcon.frame.maxX+hiddenCommentIconHorizontalPadding, y: originY, width: authorRect.width, height: authorRect.height + padding.BrownFontVertical.rawValue)
         let timeLabelSize = CGSize(width: mainViewWidth-(authorLabel.frame.maxX+padding.generic.rawValue), height: .greatestFiniteMagnitude)
         let timeLabelFrame = timeLabel.sizeThatFits(timeLabelSize)
-        timeLabel.frame = CGRect(x: authorLabel.frame.maxX, y: authorLabel.frame.origin.y, width: timeLabelFrame.width, height: timeLabelFrame.height)
+        timeLabel.frame = CGRect(x: authorLabel.frame.maxX, y: authorLabel.frame.origin.y, width: timeLabelFrame.width, height: timeLabelFrame.height + padding.BrownFontVertical.rawValue)
         if replyLabel.attributedText != nil {
             replyLabel.frame = CGRect(x: timeLabel.frame.maxX, y: timeLabel.frame.origin.y, width: (mainViewWidth-timeLabel.frame.maxX+padding.generic.rawValue), height: authorLabel.frame.height)
         }else{
@@ -95,10 +84,10 @@ class CommentCell:UITableViewCell{
         }
         
         let commentLabelYorigin = authorLabel.frame.maxY + padding.interLabel.rawValue
-        let commentWidth = mainViewWidth - (padding.horizontalTotal.rawValue)
+        let commentWidth = mainViewWidth - (padding.genericDouble.rawValue)
         let commentSize = CGSize(width: commentWidth, height: .greatestFiniteMagnitude)
         let commentRect = commentLabel.sizeThatFits(commentSize)
-        commentLabel.frame = CGRect(x: originX, y: commentLabelYorigin, width: commentRect.width, height: commentRect.height)
+        commentLabel.frame = CGRect(x: originX, y: commentLabelYorigin, width: commentRect.width, height: commentRect.height + padding.BrownFontVertical.rawValue)
         
     }
     required init?(coder aDecoder: NSCoder) {
