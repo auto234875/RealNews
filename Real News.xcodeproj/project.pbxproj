@@ -11,7 +11,6 @@
 		4F387AE31EA7D1C800EA485E /* LicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F387AE21EA7D1C800EA485E /* LicensesViewController.swift */; };
 		4F387AFD1EA7D34C00EA485E /* LicensesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F387AFC1EA7D34C00EA485E /* LicensesViewModel.swift */; };
 		4F387AFF1EA7D7C600EA485E /* LicenseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F387AFE1EA7D7C600EA485E /* LicenseCell.swift */; };
-		4F387B031EA7F8AA00EA485E /* Privacy Policy in Sources */ = {isa = PBXBuildFile; fileRef = 4F387B021EA7F8AA00EA485E /* Privacy Policy */; };
 		4F7AD7721E5C5577008D963C /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7AD75C1E5C5577008D963C /* AboutView.swift */; };
 		4F7AD7731E5C5577008D963C /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7AD75D1E5C5577008D963C /* AboutViewController.swift */; };
 		4F7AD7741E5C5577008D963C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7AD75E1E5C5577008D963C /* AppDelegate.swift */; };
@@ -394,8 +393,8 @@
 		4F48183E1E175CA800B43B40 = {
 			isa = PBXGroup;
 			children = (
-				4FFB48B61E921EA80094288E /* SwiftyStoreKit.xcodeproj */,
 				4F01C7031E5C4D320069ACEF /* RealNews */,
+				4FFB48B61E921EA80094288E /* SwiftyStoreKit.xcodeproj */,
 				4F65AFD31E1E1BF1000CC313 /* Rx.xcodeproj */,
 				4F4818481E175CA800B43B40 /* Products */,
 				4F65B02C1E20E350000CC313 /* Frameworks */,
@@ -873,7 +872,6 @@
 				4F7AD7791E5C5577008D963C /* CommentViewController.swift in Sources */,
 				4F7AD7841E5C5577008D963C /* StoryWebBrowserViewController.swift in Sources */,
 				4F9F92111E9080CC003FCC93 /* String+Extension.swift in Sources */,
-				4F387B031EA7F8AA00EA485E /* Privacy Policy in Sources */,
 				4F9F921E1E90A4FE003FCC93 /* MinimalSearchBar.swift in Sources */,
 				4F7AD7741E5C5577008D963C /* AppDelegate.swift in Sources */,
 				4F7AD7831E5C5577008D963C /* StoryCell.swift in Sources */,

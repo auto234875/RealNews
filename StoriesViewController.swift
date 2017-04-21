@@ -128,7 +128,11 @@ class StoriesViewController: UIViewController,UITableViewDataSource,UITableViewD
                 }
         }).addDisposableTo(disposeBag)
         
+        setupSearch()
         
+        
+    }
+    private func setupSearch(){
         
         searchBar.text.asObservable().map({[unowned self](text)->Observable<StoryCellViewModel?> in
             DispatchQueue.main.async(execute: {[unowned self]()->Void in
@@ -168,10 +172,10 @@ class StoriesViewController: UIViewController,UITableViewDataSource,UITableViewD
                 self.searchStories.append(unwrappedStory)
                 self.searchTableView.reloadData()
             })
+            },onError:{[unowned self] error in
+                self.setupSearch()
             }).addDisposableTo(disposeBag)
-
     }
-   
     func loadStories()->Disposable{
         self.activityIndicator.startAnimating()
         let storyDisposable = newStory(cellWidth: UIScreen.main.bounds.width - padding.cell.rawValue*2,type:storiesType!).subscribe(onNext:{(story:StoryCellViewModel?)->Void in
@@ -243,8 +247,9 @@ class StoriesViewController: UIViewController,UITableViewDataSource,UITableViewD
         let destination = StoryWebBrowserViewController()
         destination.url = url
         destination.story = viewModel.story
-        destination.transitioningDelegate = tabBarController! as! SimpleTabBarViewController
-        (tabBarController! as! SimpleTabBarViewController).originFrame = cellRect
+        let transitioningDelegate = self.tabBarController! as! SimpleTabBarViewController
+        transitioningDelegate.originFrame = cellRect
+        destination.transitioningDelegate = transitioningDelegate
         destination.modalPresentationStyle = UIModalPresentationStyle.custom
         present(destination, animated: true, completion: nil)
     }
@@ -252,8 +257,9 @@ class StoriesViewController: UIViewController,UITableViewDataSource,UITableViewD
         let commentVC = CommentViewController()
         commentVC.story = story
         commentVC.showStory = true
-        commentVC.transitioningDelegate = self.tabBarController! as! SimpleTabBarViewController
-        (commentVC.transitioningDelegate as! SimpleTabBarViewController).originFrame = cellRect
+        let transitioningDelegate = self.tabBarController! as! SimpleTabBarViewController
+        transitioningDelegate.originFrame = cellRect
+        commentVC.transitioningDelegate = transitioningDelegate
         self.present(commentVC, animated: true, completion: nil)
     }
     

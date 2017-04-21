@@ -30,7 +30,11 @@ func createSearchStoriesObservableRecursive(searchTerm:String,order:SearchOrder,
             let bigOb =  Observable.from(observableStories).concat()
             return bigOb.concat(createSearchStoriesObservableRecursive(searchTerm: searchTerm, order: order, page: page + 1))
         }else{
-            return Observable.of("noresult")
+            //we need to return an observable that generates an unexpected object(not a json)
+            //this way the observer knows that the search is finished
+            //return an Observable.never or .empty will not cause the observer closure to get triggered
+            //and the loading animation will never halt. The user will not know that the search has completed.
+            return Observable.of(false)
         }
     }).flatMap({observable in
         return observable
